@@ -1,0 +1,1303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <base href="<%=basePath%>">
+  <title>中国（云南）国际贸易单一窗口服务器监控</title>
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+  <link href="/css/om_main.css" rel="stylesheet" type="text/css" />
+  <link href="/css/om_rotate.css" rel="stylesheet" type="text/css" />
+  <link href="/css/layui.css" rel="stylesheet" type="text/css" />
+  <link href="/css/easydropdown.flat.css" rel="stylesheet" type="text/css" />
+  <link href="/css/demo.css" rel="stylesheet" type="text/css" />
+
+  <script type="text/javascript" language="JavaScript" src="/js/echarts-all.js"></script>
+  <script type="text/javascript" language="JavaScript" src="/js/tab.js"></script>
+  <script type="text/javascript" language="JavaScript" src="/js/echarts.min.js" charset="utf-8"></script>
+    <script type="text/javascript" language="JavaScript" src="/js/jquery-1.8.3.min.js" ></script>
+  <!--<script type="text/javascript" language="JavaScript" src="/js/jquery.easydropdown.js"></script>-->
+
+
+</head>
+
+<body>
+<div class="mainhead_room">
+<div class="mainhead">中国（云南）国际贸易单一窗口服务器监控（实时）</div>
+</div>
+<!--<div th:text="${session.showIp}"></div>-->
+<input th:value="${session.showIp}" name="showIp" id="showIp" type="hidden">
+<input th:value="${session.sxFlag}" name="sxFlag" id="sxFlag" type="hidden">
+<div class="swtype_room"> 
+  <!--左侧面板 begin-->
+  <div class="main_swcom_left">
+    <div class="main_swcom_l_02">
+      <div class="main_swcom_l_02l">
+        <h2>设备列表</h2>
+      </div>
+      <div class="main_swcom_l_02r">
+        <div class="wrapper">
+          <select id="device" class="dropdown" tabindex="9" data-settings='{"wrapperClass":"flat"}'>
+              <option value="192.168.50.7">测试01（192.168.50.7）</option>
+              <option value="172.16.2.1">应用服务器1（172.16.2.1）</option>
+              <option value="172.16.2.2">应用服务器2（172.16.2.2）</option>
+              <option value="172.16.2.3">应用服务器3（172.16.2.3）</option>
+              <option value="172.16.2.40">c包服务器（172.16.2.40）</option>
+              <option value="172.16.2.69">应用服务器4（172.16.2.69）</option>
+              <option value="172.16.2.99">海关应用服务器1（172.16.2.99）</option>
+              <option value="172.16.2.100">边防应用服务器1（172.16.2.100）</option>
+              <option value="172.16.3.1">数据库服务器一（172.16.3.1）</option>
+              <option value="172.16.3.2">数据库服务器二（172.16.3.2）</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <h3>当前设备信息</h3>
+    <div class="main_swcom_osinfo">
+      <table border="0">
+        <tr>
+          <td  width="17%">计算机名：</td>
+          <td id="pcname">pcname</td>
+        </tr>
+        <tr>
+          <td>系统位数：</td>
+          <td id="arch">arch</td>
+        </tr>
+        <tr>
+          <td>系统版本：</td>
+          <td id="vendor">vendor</td>
+        </tr>
+        <tr>
+          <td>系统描述：</td>
+          <td id="description">description</td>
+        </tr>
+      </table>
+      <div class="boxfoot"></div>
+    </div>
+    <div class="main_swcom_cpuuse">
+      <h3><span class="tit">CPU</span><span id="cpuinfo" class="titinfo"></span></h3>
+      <div class="show_box_room">
+       <h4><span class="tit-l">%利用率</span><span class="tit-r">100%</span></h4>
+       <div class="show_box" id="cpuuse"></div>
+       <h4><span class="tit-l">60秒</span><span class="tit-r">0</span></h4>
+       <div class="boxfoot"></div>
+      </div>
+
+    </div>
+    <div class="main_swcom_cpuuse">
+      <h3>内存</h3>
+      <div class="show_box_roomsu">
+       <h4><span class="tit-l">内存使用量</span><span class="tit-r">100%</span></h4>
+       <div class="show_boxsu" id="meruse"></div>
+       <h4><span class="tit-l">60秒</span><span class="tit-r">0</span></h4>
+       <div class="boxfoot"></div>
+      </div>
+    </div>
+  </div>
+  <!--左侧面板 end--> 
+  
+  <!--中间面板 begin-->
+<div class="main_swtype_center_room">
+<h4>设备报警</h4>
+<div class="om_center_wendu">
+<div class="yujing_icon"></div>
+<!-- 预警 begin -->
+<div id="FontScroll">
+ <ul id="showAlarms">
+     <!--<li>172.16.2.1监控详情：内存：<span>10</span>次、温度：<span>20</span>次、系统日志：<span>20</span>条、病毒（清除）：<span>50</span>次</li>-->
+ </ul>
+</div>
+<div class="t_news_beizhu">备注：内存超过60%时、温度超过45℃、系统日志记录error、病毒清除时，计入预警。</div>
+<!-- 预警 end -->
+
+  <div class="boxfoot"></div>
+</div>
+
+
+
+    <h4>温度（℃）</h4>
+    <div class="om_center_room01">
+        <div class="wenducanvans" id="wendu"></div>
+        <div class="wendutext">
+
+            <span>主板温度</span><span>CPU综合温度</span><span>中央处理器温度</span><span>CPU核心温度</span><span>GPU核心温度</span>
+        </div>
+        <div class="boxfoot"></div>
+    </div>
+
+    <h4>系统日志</h4>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.list_lh li:even').addClass('lieven');
+        })
+        $(function(){
+            $("div.list_lh").myScroll({
+                speed:40, //数值越大，速度越慢
+                rowHeight:68 //li的高度
+            });
+        });
+    </script>
+    <div class="om_center_room02">
+      <div class="middle">
+          <div class="safe_left">
+            <table class="fixed_header">
+              <thead>
+                <tr>
+                  <th style="width: 120px;">事件类型</th>
+                  <th style="width: 400px;">事件源</th>
+                  <th style="width: 150px;">操作时间</th>
+                </tr>
+              </thead>
+            </table>
+            <div class="list_lh">
+              <ul id="filemonitor01">
+
+              </ul>
+            </div>
+          </div>
+      </div>
+      <div class="boxfoot"></div>
+    </div>
+  </div>
+  <!--中间面板 end-->
+  
+<div class="main_swcom_right">
+
+<!--存储状态 begin-->
+<h3>存储（Gb、%）</h3>
+<div class="om_center_cunchu">
+ <div id="questype01" class="cpu_center_room01"></div>
+ <div id="questype02" class="mer_center_room01"></div>
+ <div class="boxfoot"></div>
+</div>
+<!--存储状态 end-->
+
+<!--运行状态 begin-->
+<h3>进程状态(个)&nbsp;<span id="currentdate01"></span></h3>
+<div class="main_swcom_rbs_room">
+<div class="main_swcom_rbs" id="questiontype"></div>
+<div class="boxfoot"></div>
+</div>
+<!--运行状态 end-->
+
+<!--scans info begin-->
+    <h2>病毒扫描</h2>
+
+    <script type="text/javascript" src="/js/scroll.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.myscroll').myScroll({
+                speed: 100, //数值越大，速度越慢
+                rowHeight: 30 //li的高度
+            });
+        });
+    </script>
+
+ <div class="myscroll_room">
+    <table id="tableId" border="0" cellspacing="0" cellpadding="0" class="scansinfo">
+        <thead>
+            <tr>
+                <th style="width: 25%">扫描时间</th>
+                <th style="width: 14%">扫描总数</th>
+                <th style="width: 14%">清除总数</th>
+                <th style="width: 20%">处理方式</th>
+                <th style="width: 26%">扫描位置</th>
+            </tr>
+        </thead>
+    </table>
+    <div class="myscroll">
+      <ul id="safetyChecks">
+
+      </ul>
+    </div>
+   <div class="boxfoot"></div>
+ </div>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+    var sxFlag = 0;
+    var deviceip = "192.168.50.7";
+    var xArrCpu = new Array();
+    var yArrCpu = new Array();
+    var xArrMemory = new Array();
+    var yArrMemory = new Array();
+    $(document).ready(function(){
+
+
+        var sxFlagTemp = $("#sxFlag").val();
+        if(sxFlagTemp == "1"){
+            sxFlag = 1;
+        }
+
+        if(sxFlag == 1){
+            deviceip = $("#showIp").val();
+        }
+        $("#device").val(deviceip);
+        getHardDiscs(deviceip);
+        showSafetyChecks(deviceip);
+        getCpuDatas(deviceip);
+        cpuUseRates(deviceip);
+        getMemoryDatas(deviceip);
+        memoryUseRates(deviceip);
+        getOparetionInfo(deviceip);
+        filemonitor(deviceip);
+        getSafety(deviceip);
+        getProcessInfos(deviceip);
+        showCpuInfos(deviceip);
+        getCurrentDate();
+        getWenDuData(deviceip);
+        showAlarms(deviceip);
+        clearIpSeeion();
+
+    });
+
+    $("#device").bind("change", function() {
+        deviceip = $("#device option:selected").val();
+        $.ajax({
+            //type: "POST",
+            async: false,
+            url: "/comprehensiveController/getShowIp",
+            data:{"deviceip":deviceip,"sxFlag":sxFlag},
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                //alert("error");
+            },
+            success: function(msg){//请求成功
+            }
+        });
+        window.location.reload();
+
+    });
+
+    function clearIpSeeion() {
+        $.ajax({
+            //type: "POST",
+            async: false,
+            url: "/comprehensiveController/clearIp",
+            //data:{"deviceip":deviceip},
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+
+            },
+            success: function(msg){//请求成功
+
+            }
+        });
+    }
+
+    (function($) {
+        var duration = 2500;  // change this to change rotation time in milliseconds
+        var current = 1;
+        var tricker = $(".tricker");
+        var height = tricker.height();
+        var number = tricker.children().length;
+        var first = tricker.children().first();
+
+        setInterval(function() {
+            var interv = current * -1 * height;
+            first.css("margin-top", interv + "px");
+            if (current == number) {
+                first.css("margin-top", "0px");
+                current = 1;
+            } else {
+                current++;
+            }
+        }, duration);
+    })(jQuery);
+
+</script>
+
+<script type="text/javascript">
+    //getHardDiscs();
+    function getHardDiscs(deviceip) {
+        $.ajax({
+            url:"/comprehensiveController/getHardDiscs",
+            data:{"deviceip":deviceip},
+            async:true,
+            success:function (res) {
+                var hardInfos = res;
+                var cUsed = hardInfos.C.useAmount;
+                var cFree = hardInfos.C.freeAmount;
+                var dUsed =  hardInfos.D.useAmount;
+                var dFree = hardInfos.D.freeAmount;
+                var myChart01 = echarts.init(document.getElementById('questype01'));
+                var myChart02 = echarts.init(document.getElementById('questype02'));
+                option01 = {
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c}GB ({d}%)"
+                    },
+                    color:['#ea4335','#34a853'],
+                    legend: {
+                        orient:'horizontal',
+                        x : 'center',
+                        textStyle: {
+                            color: '#ffffff'
+                        },
+                        data:['已用','空闲']
+                    },
+                    grid: {
+                        top: '25px',
+                        left: '3%',
+                        right: '3%',
+                        containLabel: true
+                    },
+                    calculable : true,
+                    series : [
+                        {
+                            name:'C盘使用率',
+                            type:'pie',
+                            radius : ['50%', '65%'],
+                            itemStyle : {
+                                normal : {
+                                    label : {
+                                        show : false
+                                    },
+                                    labelLine : {
+                                        show : false
+                                    }
+                                },
+                                emphasis : {
+                                    label : {
+                                        show : true,
+                                        position : 'left',
+                                        textStyle : {
+                                            fontSize : '14',
+                                            fontWeight : 'bold'
+                                        }
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:cUsed, name:'已用'},
+                                {value:cFree, name:'空闲'}
+                            ]
+                        }
+                    ]
+                };
+                option02 = {
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c}GB ({d}%)"
+                    },
+                    color:['#ea4335','#34a853'],
+                    legend: {
+                        orient:'horizontal',
+                        x : 'center',
+                        textStyle: {
+                            color: '#ffffff'
+                        },
+                        data:['已用','空闲']
+                    },
+                    grid: {
+                        top: '25px',
+                        left: '3%',
+                        right: '3%',
+                        containLabel: true
+                    },
+                    calculable : true,
+                    series : [
+                        {
+                            name:'D盘使用率',
+                            type:'pie',
+                            radius : ['50%', '65%'],
+                            itemStyle : {
+                                normal : {
+                                    label : {
+                                        show : false
+                                    },
+                                    labelLine : {
+                                        show : false
+                                    }
+                                },
+                                emphasis : {
+                                    label : {
+                                        show : true,
+                                        position : 'left',
+                                        textStyle : {
+                                            fontSize : '14',
+                                            fontWeight : 'bold'
+                                        }
+                                    }
+                                }
+                            },
+                            data:[
+                                {value:dUsed, name:'已用'},
+                                {value:dFree, name:'空闲'},
+                            ]
+                        }
+                    ]
+                };
+                myChart01.setOption(option01,true);
+                myChart02.setOption(option02,true);
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    function cpuUseRates(deviceip) {
+        var yArrCpuLength = yArrCpu.length;
+        var myChart = echarts.init(document.getElementById('cpuuse'));
+        var date = [];
+        var randomData = [];
+
+        for(var i = 0; i<50; i++){
+            date.push('第' + (i+1) + '秒');
+            randomData.push(yArrCpu[i]);
+        }
+
+        var option = {
+            title : {
+                text: 'CPU使用率实时监控',
+                show:false,
+                subtext: 'CPU使用率'
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                show:false,
+                splitLine:{
+                    show:false
+                },
+                data: date
+            },
+            yAxis: {
+                type: 'value',
+                show:false,
+                splitLine:{
+                    show:false
+                }
+            },
+            grid: {
+                top: '8%',
+                left: '2%',
+                right: '2%',
+                bottom: '2%',
+                containLabel: true
+            },
+            series: [{
+                data: randomData,
+                type: 'line',
+                itemStyle : {
+                    normal : {
+                        lineStyle: {
+                            color: '#2aa144',  //曲线的颜色
+                            width:2
+                        }
+                    }
+                }
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var len = date.length;
+
+        setInterval(function(){
+            getCpuDatas(deviceip);
+            var tempData;
+            var aa = Math.random()*100+"";
+            var bb = aa.split(".");
+            var cc = bb[0];
+            for(var i = 0; i<yArrCpuLength; i++){
+                if(cc == i){
+                    tempData = yArrCpu[i];
+                }
+            }
+            //randomData.push(Math.floor(Math.random()*100));
+            randomData.push(tempData);
+            randomData.shift();
+            date.push(len++);
+            date.shift();
+            myChart.setOption({
+                xAxis: {
+                    data: date
+                },
+                series: [{
+                    data: randomData
+                }]
+            });
+        }, 2000);
+    }
+
+    function getCpuDatas(deviceip) {
+        $.ajax({
+            //type: "POST",
+            async: false,
+            url: "/comprehensiveController/showDynamicCpuInfos",
+            data:{"deviceip":deviceip},
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                //alert("error");
+            },
+            success: function(msg){//请求成功
+                xArrCpu = msg[0];
+                yArrCpu = msg[1];
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    function memoryUseRates(deviceip) {
+        var yArrMemoryLength = yArrMemory.length;
+        var myChart = echarts.init(document.getElementById('meruse'));
+        var date = [];
+        var randomData = [];
+
+        for(var i = 0; i<50; i++){
+            //date.push('第' + (i+1) + '天');
+            //randomData.push(Math.floor(Math.random()*100));
+            date.push('第' + (i+1) + '秒');
+            randomData.push(yArrMemory[i]);
+        }
+        // 指定图表的配置项和数据
+        var option = {
+            title : {
+                text: '内存使用率实时监控',
+                subtext: '内存使用率',
+                show:false
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                show:false,
+                splitLine:{
+                    show:false
+                },
+                data: date
+            },
+            yAxis: {
+                type: 'value',
+                show:false,
+                splitLine:{
+                    show:false
+                }
+            },
+            grid: {
+                top: '20%',
+                left: '2%',
+                right: '2%',
+                bottom: '2%',
+                containLabel: true
+            },
+            series: [{
+                data: randomData,
+                type: 'line',
+                itemStyle : {
+                    normal : {
+                        lineStyle: {
+                            color: '#2aa144',  //曲线的颜色
+                            width:2
+                        }
+                    }
+                }
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var len = date.length;
+
+        setInterval(function(){
+            getMemoryDatas(deviceip);
+            var tempData;
+            var aa = Math.random()*100+2+"";
+            var bb = aa.split(".");
+            var cc = bb[0];
+            for(var i = 0; i<yArrMemoryLength; i++){
+                if(cc == i){
+                    tempData = yArrMemory[i];
+                }
+            }
+            //randomData.push(Math.floor(Math.random()*100));
+            randomData.push(tempData);
+            randomData.shift();
+            date.push(len++);
+            date.shift();
+            myChart.setOption({
+                xAxis: {
+                    data: date
+                },
+                series: [{
+                    data: randomData
+                }]
+            });
+        }, 2000);
+    }
+
+    function getMemoryDatas(deviceip) {
+        $.ajax({
+            //type: "POST",
+            async: false,
+            url: "/comprehensiveController/showMenorys",
+            data:{"deviceip":deviceip},
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                //alert("error");
+            },
+            success: function(msg){//请求成功
+                xArrMemory = msg[0];
+                yArrMemory = msg[1];
+            }
+        });
+    }
+
+</script>
+<script type="text/javascript">
+
+  function getOparetionInfo(deviceip) {
+      $.ajax({
+          url:"/comprehensiveController/getOprateSysInfo",
+          data:{"deviceip":deviceip},
+          async:true,
+          success:function (res) {
+              var pcname = res.pcName;
+              var arch = res.arch;
+              var vendor = res.vendor;
+              var description = res.description;
+              $("#pcname").html(pcname);
+              $("#arch").html(arch);
+              $("#vendor").html(vendor);
+              $("#description").html(description);
+          }
+      });
+
+  }
+</script>
+<script type="text/javascript">
+  /*文件监控*/
+  function filemonitor(deviceip) {
+      var tbodyStr = "";
+      $.ajax({
+          url:"/comprehensiveController/showSystemLogsVo",
+          data:{"deviceip":deviceip},
+          async:true,
+          success:function (res) {
+              for(var i=0;i<res.length;i++){
+                  var myfile = res[i];
+                  tbodyStr += "<li><p><span class='suwh01'>"+myfile.eventType+"</span><span class='suwh02'>"+myfile.eventSource+"</span><span class='suwh03'>"+myfile.eventTime+"</span></p></li>";
+              }
+              $("#filemonitor01").html(tbodyStr);
+              tbodyStr = tbodyStr.replace("undefined","");
+              //console.log("tbodyStr == ",tbodyStr);
+              $("#filemonitor01").html(tbodyStr);
+          }
+      });
+
+  }
+
+</script>
+<script type="text/javascript">
+  function getSafety(deviceip) {
+      var ulStr01;
+      $.ajax({
+          url:"/comprehensiveController/showSafetyChecks",
+          data:{"deviceip":deviceip},
+          async:true,
+          success:function (res) {
+              for(var i=0;i<res.length;i++){
+                  var safety = res[i];
+                  ulStr01 += "<li><span class=\"wh01\">"+safety.scanTime+"</span><span class=\"wh02\">"+safety.scanTotalFileCount+"</span><span class=\"wh03\">"+safety.clearCount+"</span><span class=\"wh04\">"+safety.processType+"</span><span class=\"wh05\">"+safety.scanContent+"</span></li>\n";
+              }
+              $("#ul01").html(ulStr01);
+          }
+      });
+
+  }
+</script>
+<script type="text/javascript">
+    //getProcessInfos(deviceip);
+
+    function getProcessInfos(deviceip) {
+        var heXinDataList;
+        var administratorDataList;
+        var systemDataList;
+        var xData;
+        var myChart = echarts.init(document.getElementById('questiontype'));
+        $.ajax({
+            url:"/comprehensiveController/showProcess",
+            data:{"deviceip":deviceip},
+            async:true,
+            success:function (res) {
+                heXinDataList = res.heXinDataList;
+                administratorDataList = res.administratorDataList;
+                systemDataList = res.systemDataList;
+                xData = res.xData;
+                option = {
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    legend: {
+                        data:['核心进程','Administrator','SYSTEM'],
+                        padding: [20, 10, 10, 10],
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '1%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            show:false,
+                            splitLine:{
+                                show:false
+                            },
+                            data:xData
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            show:false,
+                            splitLine:{
+                                show:false
+                            }
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'核心进程',
+                            type:'bar',
+                            itemStyle: {
+                                normal: {
+                                    //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+                                    color: function(params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#E87C25'
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    },
+                                    //以下为是否显示，显示位置和显示格式的设置了
+                                    label: {
+                                        show: true,
+                                        position: 'top',
+                                        textStyle: {
+                                            color: 'white'
+                                        },
+//                             formatter: '{c}'
+                                        formatter: '{b}\n{c}'
+                                    }
+                                }
+                            },
+                            data:heXinDataList
+                        },
+                        {
+                            name:'Administrator',
+                            type:'bar',
+                            itemStyle: {
+                                normal: {
+                                    //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+                                    color: function(params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#0a8cff'
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    },
+                                    //以下为是否显示，显示位置和显示格式的设置了
+                                    label: {
+                                        show: true,
+                                        position: 'top',
+                                        textStyle: {
+                                            color: 'white'
+                                        },
+//                             formatter: '{c}'
+                                        formatter: '{b}\n{c}'
+                                    }
+                                }
+                            },
+                            stack: '系统用户',
+                            data:administratorDataList
+                        },
+                        {
+                            name:'SYSTEM',
+                            type:'bar',
+                            itemStyle: {
+                                normal: {
+                                    //好，这里就是重头戏了，定义一个list，然后根据所以取得不同的值，这样就实现了，
+                                    color: function(params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#45f0ea'
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    },
+                                    //以下为是否显示，显示位置和显示格式的设置了
+                                    label: {
+                                        show: true,
+                                        position: 'top',
+                                        textStyle: {
+                                            color: 'white'
+                                        },
+//                             formatter: '{c}'
+                                        formatter: '{b}\n{c}'
+                                    }
+                                }
+                            },
+                            data:systemDataList
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+            }
+        });
+    }
+
+    function showCpuInfos(deviceip) {
+        var cpuinfo;
+        $.ajax({
+            url:"/comprehensiveController/showCpuInfos",
+            data:{"deviceip":deviceip},
+            async:true,
+            success:function (res) {
+                cpuinfo = res.cpuVendor+"、"+res.cpuType+"、"+res.cpuMhz+"、"+res.totalCores+"核";
+                $("#cpuinfo").html(cpuinfo);
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    /*获取当前日期*/
+    getCurrentDate();
+    function getCurrentDate() {
+        var myDate = new Date();
+        var year = myDate.getFullYear();
+        var month = myDate.getMonth()+1;
+
+        if(month<10){
+            month = "0"+month;
+        }
+        var day = myDate.getDate();
+        if(day<10){
+            day = "0"+day;
+        }
+        var currentDate = year+"-"+month+"-"+day;
+        $("#currentdate01").html(currentDate);
+    }
+</script>
+
+<script type="text/javascript">
+    var cpuWJ;
+    function getWenDuData(deviceip) {
+        $.ajax({
+            data:{"deviceip":deviceip},
+            async: false,
+            url: "/comprehensiveController/showCpuTemperature",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+
+            },
+            success: function(msg){//请求成功
+                cpuWJ = msg;
+            }
+        });
+    }
+
+    wenDuOption = {
+        tooltip : {
+            formatter: "{a} <br/>{c} {b}"
+        },
+        toolbox: {
+            show: false
+        },
+        series : [
+            {
+                name: '中央处理器温度',
+                type: 'gauge',
+                z: 3,
+                min: 0,
+                max: 100,
+                center: ['50%', '60%'],    // 默认全局居中
+                splitNumber: 11,
+                startAngle:180,//开始角度
+                endAngle:0,//结束角度
+                radius: '85%',
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color : [ //表盘颜色
+                            [ 0.3, "#20AE51" ],
+                            [ 0.5, "#C7DD6B" ],
+                            [ 0.7, "#FEEC49" ],
+                            [ 0.8, "#FFC539" ],
+                            [ 1,"#FF9618" ]
+                        ],
+                        width: 10
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length: 15,        // 属性length控制线长
+                    show: true,
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '40%',
+                    width:6
+                },
+                splitLine: {           // 分隔线
+                    length: 20,         // 属性length控制线长
+                    show: true,
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                axisLabel: {
+                    borderRadius: 1,
+                    color: '#eee',
+                    padding: 3,
+                    textShadowColor: '#222',
+                    show: false
+                },
+                title : {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    fontSize: 16,
+                    color:'#fff'
+                },
+                detail : {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    formatter: function (value) {
+                        value = (value + '').split('.');
+                        value.length < 2 && (value.push('00'));
+                        return ('00' + value[0]).slice(-2);
+                    },
+                    color: '#C7DD6B',
+                    fontWeight: 'bolder',
+                    fontSize:24,
+                    rich : {
+                        score : {
+                            color : "#fff",
+                            fontFamily : "微软雅黑",
+                            fontSize : 14
+                        },
+                        name : {
+                            height : 25,
+                            color : "#fff",
+                            fontFamily : "微软雅黑",
+                            fontSize : 14
+                        }
+                    }
+                },
+                data:[{value: 40, name: '℃'}]
+            },
+            {
+                name: '主板温度',
+                type: 'gauge',
+                center: ['10%', '60%'],    // 默认全局居中
+                radius: '65%',
+                min:0,
+                max:100,
+                splitNumber:7,
+                startAngle:180,//开始角度
+                endAngle:0,//结束角度
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color : [ //表盘颜色
+                            [ 0.3, "#20AE51" ],
+                            [ 0.5, "#C7DD6B" ],
+                            [ 0.7, "#FEEC49" ],
+                            [ 0.8, "#FFC539" ],
+                            [ 1,"#FF9618" ]
+                        ],
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    },
+                    color:'#fff'
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '40%',
+                    width:4
+                },
+                title: {
+                    offsetCenter: [0, '-30%'],       // x, y，单位px
+                },
+                detail: {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: '#C7DD6B',
+                    fontWeight: 'bolder',
+                    fontSize:24
+                },
+                axisLabel : { //文字样式（及“10”、“20”等文字样式）
+                    borderRadius: 1,
+                    color: '#eee',
+                    padding: 3,
+                    textShadowColor: '#222',
+                    show: false
+                 },
+                data:[{value: 43, name: '℃'}]
+            },
+            {
+                name: 'CPU综合温度',
+                type: 'gauge',
+                center: ['30%', '60%'],    // 默认全局居中
+                radius: '65%',
+                min:0,
+                max:100,
+                splitNumber:7,
+                startAngle:180,//开始角度
+                endAngle:0,//结束角度
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color : [ //表盘颜色
+                            [ 0.3, "#20AE51" ],
+                            [ 0.5, "#C7DD6B" ],
+                            [ 0.7, "#FEEC49" ],
+                            [ 0.8, "#FFC539" ],
+                            [ 1,"#FF9618" ]
+                        ],
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '40%',
+                    width:4
+                },
+                title: {
+                    offsetCenter: [0, '-30%'],       // x, y，单位px
+                },
+                detail: {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: '#C7DD6B',
+                    fontWeight: 'bolder',
+                    fontSize:24,
+                },
+                axisLabel : { //文字样式（及“10”、“20”等文字样式）
+                    show: false
+                },
+                data:[{value: 38, name: '℃'}]
+            },
+            {
+                name: 'CPU核心温度',
+                type: 'gauge',
+                center: ['70%', '60%'],    // 默认全局居中
+                radius: '65%',
+                min:0,
+                max:100,
+                startAngle:180,//开始角度
+                endAngle:0,//结束角度
+                splitNumber:7,
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color : [ //表盘颜色
+                            [ 0.3, "#20AE51" ],
+                            [ 0.5, "#C7DD6B" ],
+                            [ 0.7, "#FEEC49" ],
+                            [ 0.8, "#FFC539" ],
+                            [ 1,"#FF9618" ]
+                        ],
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '40%',
+                    width:4
+                },
+                title: {
+                    offsetCenter: [0, '-30%'],       // x, y，单位px
+                },
+                axisLabel : { //文字样式（及“10”、“20”等文字样式）
+                    show: false
+                },
+                detail: {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: '#C7DD6B',
+                    fontWeight: 'bolder',
+                    fontSize:24,
+                },
+                data:[{value: 42, name: '℃'}]
+            },
+            {
+                name: 'GPU核心温度',
+                type: 'gauge',
+                center: ['90%', '60%'],    // 默认全局居中
+                radius: '65%',
+                min:0,
+                max:100,
+                startAngle:180,//开始角度
+                endAngle:0,//结束角度
+                splitNumber:7,
+                axisLine: {            // 坐标轴线
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color : [ //表盘颜色
+                            [ 0.3, "#20AE51" ],
+                            [ 0.5, "#C7DD6B" ],
+                            [ 0.7, "#FEEC49" ],
+                            [ 0.8, "#FFC539" ],
+                            [ 1,"#FF9618" ]
+                        ],
+                        width: 8
+                    }
+                },
+                axisTick: {            // 坐标轴小标记
+                    length:12,        // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle控制线条样式
+                        color: 'auto'
+                    }
+                },
+                splitLine: {           // 分隔线
+                    length:20,         // 属性length控制线长
+                    lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                        color: 'auto'
+                    }
+                },
+                pointer: {
+                    length: '40%',
+                    width:4
+                },
+                title: {
+                    offsetCenter: [0, '-30%'],       // x, y，单位px
+                },
+                detail: {
+                    // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                    color: '#C7DD6B',
+                    fontWeight: 'bolder',
+                    fontSize:24,
+                },
+                axisLabel : { //文字样式（及“10”、“20”等文字样式）
+                    show: false
+                },
+                data:[{value: 39, name: '℃'}]
+            },
+        ]
+    };
+
+    setInterval(function (){
+        getWenDuData(deviceip);
+        var mainBoard = cpuWJ.mainBoard;
+        var centralCpu = cpuWJ.centralCpu;
+        var ccpuPackage = cpuWJ.ccpuPackage;
+        var ccpuIaCores = cpuWJ.ccpuIaCores;
+        var ccpuGtCores = cpuWJ.ccpuGtCores;
+        wenDuOption.series[0].data[0].value = centralCpu;
+        wenDuOption.series[1].data[0].value = mainBoard;
+        wenDuOption.series[2].data[0].value = ccpuPackage;
+        wenDuOption.series[3].data[0].value = ccpuIaCores;
+        wenDuOption.series[4].data[0].value = ccpuGtCores;
+        wenDuChart.setOption(wenDuOption,true);
+    },2000);
+
+    var wenDuChart = echarts.init(document.getElementById('wendu'));//get()方法作用：将jQuery对象转Dom对象
+    wenDuChart.setOption(wenDuOption);
+
+
+</script>
+
+<script type="text/javascript">
+    showAlarms(deviceip);
+    function showAlarms(deviceip) {
+        $.ajax({
+            data:{"deviceip":deviceip},
+            async: true,
+            url: "/comprehensiveController/showAlarms",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+
+            },
+            success: function(msg){//请求成功
+                var htmlStr = "";
+                for(var i =0;i<msg.length;i++){
+                    var ip = msg[0].ip;
+                    var tempMap = msg[0].tempMap;
+                    var menory = tempMap.menory;
+                    var wendu = tempMap.wendu;
+                    var sysLogs = tempMap.sysLogs;
+                    var safety = tempMap.safety;
+                    htmlStr += "<li>"+ip+"监控详情：内存：<span>"+menory+"</span>次、温度：<span>"+wendu+"</span>次、系统日志：<span>"+sysLogs+"</span>条、病毒（清除）：<span>"+safety+"</span>次</li>";
+                }
+                var tempStr = "";
+                for(var i=0;i<5;i++){
+                    tempStr += htmlStr;
+                }
+                $("#showAlarms").html(tempStr);
+                $('#FontScroll').FontScroll({time: 3000,num: 1});
+            }
+        });
+    }
+</script>
+<script type="text/javascript" language="JavaScript" src="/js/fontscroll.js"></script>
+
+<script type="text/javascript">
+    //safetyChecks
+    //showSafetyChecks(deviceip);
+    function showSafetyChecks(deviceip) {
+        $.ajax({
+            data:{"deviceip":deviceip},
+            async: true,
+            url: "/comprehensiveController/showSafetyChecks",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+
+            },
+            success: function (msg) {//请求成功
+                var htmlStr = "";
+                for (var i = 0; i < msg.length; i++) {
+                    var safety = msg[i];
+                    var scanTime = safety.scanTime.split("：")[1];
+                    var scanTotalFileCount = safety.scanTotalFileCount.split("：")[1];
+                    var clearCount = safety.clearCount.split("：")[1];
+                    var processType = safety.processType.split("：")[1];
+                    var scanContent = safety.scanContent;
+                    htmlStr += "<li><span class=\"wh01\">"+scanTime+"</span><span class=\"wh02\">"+scanTotalFileCount+"</span>"+
+                        "<span class=\"wh03\">"+clearCount+"</span><span class=\"wh04\">"+processType+"</span>"+
+                        "<span class=\"wh05\">"+scanContent+"</span></li>";
+                }
+                var tempStr = "";
+
+                $("#safetyChecks").html(htmlStr);
+            }
+        });
+    }
+</script>
+</body>
+</html>

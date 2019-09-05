@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dtg.swt_monitor.shows.dao.ComprehensiveDao">
+    <select id="getAllCpuInfos" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.CpuInfos">
+        select * from cpuinfos where ip = #{currentIP01} order by createtime desc limit 0,100
+    </select>
+
+    <select id="getAllMenorys" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.Memory">
+        select * from memory where ip = #{currentIP02} order by createtime desc limit 0,300
+    </select>
+
+    <select id="getOprateSyss" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.OprateSys">
+        select * from opratesys where ip = #{currentIP03}
+    </select>
+
+    <select id="getAllMyFiles" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.MyFile">
+        select * from myfile where ip = #{currentIP04} order by createtime desc limit 0,100
+    </select>
+
+    <select id="getSafetyChecks" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.SafetyCheck">
+        select * from safetycheck where ip = #{currentIP05} order by scantime desc limit 0,100
+    </select>
+
+    <select id="getHardDiscs" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.HardDisc">
+        select * from
+        (
+        select * from harddisc where ip = #{currentIP06} and devname = 'C:\\' order by createtime desc limit 0,1
+        ) a
+        union
+        select * from
+        (
+        select * from harddisc where ip = #{currentIP06} and devname = 'D:\\' order by createtime desc limit 0,1
+        ) b
+    </select>
+
+    <select id="getAllComputerProcesss" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.ShowProcess">
+        select '核心进程' as processname,e.* from
+        (
+        select wctime,count(*) processsum from
+        (
+        select c.createtime,substr(c.createtime,1,15) wctime from
+        (
+        select * from
+        (
+        select str_to_date(a.createtime, '%Y-%m-%d %H:%i:%s') createtimedate,now() nowtime,date_sub(now(),interval 30 minute) before10 ,a.*from computerprocess a where ip = #{currentIP07} and username = '???'
+        ) b where createtimedate between before10 and nowtime
+        ) c
+        ) d group by wctime
+        ) e
+        union
+        select 'Administrator' as processname,e.* from
+        (
+        select wctime,count(*) processsum from
+        (
+        select c.createtime,substr(c.createtime,1,15) wctime from
+        (
+        select * from
+        (
+        select str_to_date(a.createtime, '%Y-%m-%d %H:%i:%s') createtimedate,now() nowtime,date_sub(now(),interval 30 minute) before10 ,a.*from computerprocess a where ip = #{currentIP07} and username = 'Administrator'
+        ) b where createtimedate between before10 and nowtime
+        ) c
+        ) d group by wctime
+        ) e
+        union
+        select 'SYSTEM' as processname,e.* from
+        (
+        select wctime,count(*) processsum from
+        (
+        select c.createtime,substr(c.createtime,1,15) wctime from
+        (
+        select * from
+        (
+        select str_to_date(a.createtime, '%Y-%m-%d %H:%i:%s') createtimedate,now() nowtime,date_sub(now(),interval 30 minute) before10 ,a.*from computerprocess a where ip = #{currentIP07} and username = 'SYSTEM'
+        ) b where createtimedate between before10 and nowtime
+        ) c
+        ) d group by wctime
+        ) e
+    </select>
+
+    <select id="getCpuInfo" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.CpuInfos">
+        select * from cpuinfos where ip = #{currentIP08} limit 0 , 1
+    </select>
+
+    <select id="getAllCpuTemperature" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.CpuTemperature">
+        select * from cputemperature where ip = #{currentIP09} order by addtime desc limit 0 ,100
+    </select>
+    
+    <select id="getSysOverview" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.SysOverview">
+        select * from sysoverview where ip = #{currentIP10} limit 0 , 1
+    </select>
+
+    <select id="getAllSystemLogsVo" parameterType="java.lang.String" resultType="com.dtg.swt_monitor.shows.entity.SystemLogsVo">
+        select * from systemlogs where ip = #{currentIP11} order by eventtime desc limit 0 , 100
+    </select>
+
+    <select id="getAlarms" resultType="com.dtg.swt_monitor.shows.entity.ShowAlarm">
+        select '内存' as hardwarename,b.* from
+        (
+        select ip,createtime, useamount / totalamount as resultdata from
+        (
+        select ip,CAST(REPLACE(totalamount,'GB','') AS signed) totalamount,CAST(REPLACE(useamount,'GB','') AS signed) useamount,createtime from memory where createtime like '%2019-08-29%'
+        ) a
+        ) b where b.resultdata > 0.6 limit 0,10
+        union
+        select '温度' as hardwarename,b.* from
+        (
+        select a.ip,a.createtime,a.resultdata from
+        (
+        select ip,addtime createtime,ccpupackage resultdata, CAST(ccpupackage AS signed) wendu from cputemperature
+        ) a where wendu > 45
+        ) b
+        union
+        select '系统日志' as hardwarename,b.* from
+        (
+        select ip,eventtime,count(*) resultdata from
+        (
+        select ip,eventtime,eventsource as resultdata from systemlogs where eventtype = 'error'
+        ) a group by ip , eventtime
+        ) b limit 0,10
+        union
+        select '病毒扫描' as hardwarename,b.* from
+        (
+        select ip,scantime as createtime,sum(clearnum) resultdata from
+        (
+        select ip,scantime,clearcount,CAST(REPLACE(clearcount,'清除项目数：','') AS signed) clearnum from safetycheck where !FIND_IN_SET('清除项目数：0',clearcount)
+        ) a group by ip,scantime
+        ) b
+    </select>
+</mapper>

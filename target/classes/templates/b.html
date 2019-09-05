@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试cpu温度</title>
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <!--<script src="/echarts-4.2.1/dist/echarts.js"></script>-->
+</head>
+<body>
+<div id="test001" style="width:1500px;height:800px;">
+    <table id="table01" border frame=box style="color: hotpink">
+        <tr>
+            <td colspan="2">电脑硬件信息概览</td>
+        </tr>
+        <tr>
+            <td>IP</td>
+            <td id="computer05"></td>
+        </tr>
+        <tr>
+            <td>版本</td>
+            <td id="computer01"></td>
+        </tr>
+        <tr>
+            <td>处理器名称</td>
+            <td id="computer02"></td>
+        </tr>
+        <tr>
+            <td>主板名称</td>
+            <td id="computer03"></td>
+        </tr>
+        <tr>
+            <td>显示适配器</td>
+            <td id="computer04"></td>
+        </tr>
+    </table>
+    <br/><br/>
+    <table id="table02" border frame=box style="color: #00bb4d">
+        <tr>
+            <td colspan="2">电脑温度监测</td>
+        </tr>
+        <tr>
+            <td>主板温度：</td>
+            <td><span id="wd01">34 </span>  ℃</td>
+        </tr>
+        <tr>
+            <td>中央处理器温度：</td>
+            <td><span id="wd02">41 </span>  ℃</td>
+        </tr>
+        <tr>
+            <td>CPU综合温度：</td>
+            <td><span id="wd03">49 </span>  ℃</td>
+        </tr>
+        <tr>
+            <td>CPU核心温度：</td>
+            <td><span id="wd04">49 </span>  ℃</td>
+        </tr>
+        <tr>
+            <td>GPU核心温度：</td>
+            <td><span id="wd05">46 </span>  ℃</td>
+        </tr>
+    </table>
+    <!--<label>主板温度：</label><span id="wd01">34 </span>℃-->
+    <!--<label>中央处理器温度：</label><span id="wd02">41 </span>℃-->
+    <!--<label>CPU综合温度：</label><span id="wd03">49 </span>℃-->
+    <!--<label>CPU核心温度：</label><span id="wd04">49 </span>℃-->
+    <!--<label>GPU核心温度：</label><span id="wd05">46 </span>℃-->
+</div>
+<script type="text/javascript">
+
+    var cpuWJ;
+    var computerInfo;
+    var jincheng;
+    getData02();
+    getData03();
+    function getData01() {
+        $.ajax({
+            async: false,
+            url: "/comprehensiveController/showCpuTemperature",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                alert("error");
+            },
+            success: function(msg){//请求成功
+              //console.log("msg == ",msg);
+              cpuWJ = msg;
+            }
+        });
+    }
+
+    function getData02() {
+        $.ajax({
+            async: false,
+            url: "/comprehensiveController/showSysOverview",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                alert("error");
+            },
+            success: function(msg){//请求成功
+                //console.log("msg == ",msg);
+                computerInfo = msg;
+            }
+        });
+    }
+
+    function getData03() {
+        $.ajax({
+            async: false,
+            url: "/comprehensiveController/showProcess",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                alert("error");
+            },
+            success: function(msg){//请求成功
+                console.log("msg == ",msg);
+                jincheng = msg;
+            }
+        });
+    }
+
+    $("#computer01").html(computerInfo.version);
+    $("#computer02").html(computerInfo.processorName);
+    $("#computer03").html(computerInfo.mainBoardName);
+    $("#computer04").html(computerInfo.adapter);
+    $("#computer05").html(computerInfo.ip);
+
+    setInterval(function () {
+        getData01();
+        var mainBoard = cpuWJ.mainBoard;
+        var centralCpu = cpuWJ.centralCpu;
+        var ccpuPackage = cpuWJ.ccpuPackage;
+        var ccpuIaCores = cpuWJ.ccpuIaCores;
+        var ccpuGtCores = cpuWJ.ccpuGtCores;
+        // console.log("mainBoard == ",mainBoard);
+        // console.log("centralCpu == ",centralCpu);
+        // console.log("ccpuPackage == ",ccpuPackage);
+        // console.log("ccpuIaCores == ",ccpuIaCores);
+        // console.log("ccpuGtCores == ",ccpuGtCores);
+        $("#wd01").html(mainBoard);
+        $("#wd02").html(centralCpu);
+        $("#wd03").html(ccpuPackage);
+        $("#wd04").html(ccpuIaCores);
+        $("#wd05").html(ccpuGtCores);
+    },5000);
+
+
+</script>
+</body>
+</html>

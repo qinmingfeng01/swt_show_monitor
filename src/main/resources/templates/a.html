@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试动态加载</title>
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/echarts-4.2.1/dist/echarts.js"></script>
+</head>
+<body>
+<div id="test001" style="width:1500px;height:800px;"></div>
+    <script>
+
+        var xArr = new Array();
+        var yArr = new Array();
+        getDatas();
+        function getDatas() {
+            $.ajax({
+                //type: "POST",
+                async: false,
+                url: "/comprehensiveController/showDynamicCpuInfos",
+                //data: "num=0",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败,如果返回错误，根据错误信息进行相应的处理
+                    alert("error");
+                },
+                success: function(msg){//请求成功
+                    /*console.log("msg == ",msg);
+                    console.log("msg0 == ",msg[0]);
+                    console.log("msg1 == ",msg[1]);*/
+                    xArr = msg[0];
+                    yArr = msg[1];
+                }
+            });
+        }
+
+        var yArrLength = yArr.length;
+        var myChart = echarts.init(document.getElementById('test001'));
+
+        var date = [];
+        var randomData = [];
+
+        for(var i = 0; i<yArrLength; i++){
+            //date.push('第' + (i+1) + '天');
+            //randomData.push(Math.floor(Math.random()*100));
+            date.push('第' + (i+1) + '秒');
+            randomData.push(yArr[i]);
+        }
+
+        // 指定图表的配置项和数据
+        var option = {
+            title : {
+                text: 'CPU使用率实时监控',
+                subtext: 'CPU使用率'
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: date
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: randomData,
+                type: 'line'
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+        var len = date.length;
+
+        setInterval(function(){
+            getDatas();
+            var tempData;
+            var aa = Math.random()*100+"";
+            var bb = aa.split(".");
+            var cc = bb[0];
+            for(var i = 0; i<yArrLength; i++){
+                if(cc == i){
+                    tempData = yArr[i];
+                }
+            }
+            //randomData.push(Math.floor(Math.random()*100));
+            randomData.push(tempData);
+            randomData.shift();
+            date.push(len++);
+            date.shift();
+            myChart.setOption({
+                xAxis: {
+                    data: date
+                },
+                series: [{
+                    data: randomData
+                }]
+            });
+        }, 2000)
+
+
+    </script>
+</body>
+</html>

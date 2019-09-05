@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dtg.swt_monitor.buried.dao.ISomprehensiveDao">
+    <insert id="saveComputerProcess" parameterType="java.util.List">
+        insert into computerprocess
+        (id,ip,pid,username,stime,programsize,memorysize,share,state,time,cpurate,processname,createtime)
+        values
+        <foreach collection="processList" item="process" index="index" separator=",">
+            (
+              #{process.id},#{process.ip},#{process.pid},#{process.userName},
+              #{process.sTime},#{process.programsize},#{process.memorySize},#{process.share},
+              #{process.state},#{process.time},#{process.cpuRate},#{process.processName},
+              #{process.createtime}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveCpuInfos" parameterType="java.util.List">
+        insert into cpuinfos
+        (id,ip,errorcuprate,cpubindcount,cpumhz,userate,freerate,cputype,cpuvendor,cachesize,cpusort)
+        values
+        <foreach collection="cpuInfosList" item="cpuInfos" index="index" separator=",">
+            (
+            #{cpuInfos.id},#{cpuInfos.ip},#{cpuInfos.errorCupRate},#{cpuInfos.cpuBindCount},
+            #{cpuInfos.cpuMhz},#{cpuInfos.useRate},#{cpuInfos.freeRate},#{cpuInfos.cpuType},
+            #{cpuInfos.cpuVendor},#{cpuInfos.CacheSize},#{cpuInfos.cpuSort}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveHardDisc" parameterType="java.util.List">
+        insert into harddisc
+        (id,ip,useamount,userate,systypename,totalamount,devname,freeamount)
+        values
+        <foreach collection="hardDiscList" item="hardDisc" index="index" separator=",">
+            (
+            #{hardDisc.id},#{hardDisc.ip},#{hardDisc.useAmount},#{hardDisc.useRate},
+            #{hardDisc.sysTypeName},#{hardDisc.totalAmount},#{hardDisc.devName},#{hardDisc.freeAmount}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveMemory" parameterType="com.dtg.swt_monitor.buried.entity.Memory">
+        insert into memory
+        (id,ip,totalamount,useamount,freeamount)
+        values
+        (#{memory.id},#{memory.ip},#{memory.totalAmount},#{memory.useAmount},#{memory.freeAmount})
+    </insert>
+    
+    <insert id="saveMyFile" parameterType="com.dtg.swt_monitor.buried.entity.MyFile">
+        insert into myfile
+        (id,ip,filetype,statustype,jdpath)
+        values
+        (#{myFile.id},#{myFile.ip},#{myFile.fileType},#{myFile.statusType},#{myFile.jdPath})
+    </insert>
+
+    <insert id="saveOprateSys" parameterType="com.dtg.swt_monitor.buried.entity.OprateSys">
+        insert into opratesys
+        (id,ip,pcname,arch,datamodel,description,vendor,vendorcodename,vendorname,version)
+        values
+        (
+          #{oprateSys.id},#{oprateSys.ip},#{oprateSys.pcName},#{oprateSys.arch},#{oprateSys.dataModel},
+          #{oprateSys.description},#{oprateSys.vendor},#{oprateSys.vendorCodeName},#{oprateSys.vendorName},#{oprateSys.version}
+        )
+    </insert>
+
+    <insert id="saveSafetyCheck" parameterType="com.dtg.swt_monitor.buried.entity.SafetyCheck">
+        insert into safetycheck
+        (id,ip,scantime,usetime,scantype,scantotalfilecount,projecttotalnum,clearcount,isscanall,isscancompresspackge,processtype,isscanharddisc,isscanrootkit,isyunchakill,isrepair,conventionalengines,scancontent)
+        values
+        <foreach collection="safetyCheckList" item="safetyCheck" index="index" separator=",">
+            (
+                #{safetyCheck.id},#{safetyCheck.ip},#{safetyCheck.scanTime},#{safetyCheck.useTime},
+                #{safetyCheck.scanType},#{safetyCheck.scanTotalFileCount},#{safetyCheck.projectTotalNum},#{safetyCheck.clearCount},
+                #{safetyCheck.isScanAll},#{safetyCheck.isScanCompressPackge},#{safetyCheck.processType},#{safetyCheck.isScanHardDisc},
+                #{safetyCheck.isScanRootkit},#{safetyCheck.isYunchaKill},#{safetyCheck.isRepair},#{safetyCheck.conventionalEngines},#{safetyCheck.scanContent}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveSafetyCheckDetail" parameterType="com.dtg.swt_monitor.buried.entity.SafetyCheckDetail">
+        insert into safetycheckdetail
+        (id,ip,zeroid,pid,processname,runtime,processpath,processpathissafety)
+         values
+        <foreach collection="safetyCheckDetailList" item="safetyCheckDetail" index="index" separator=",">
+            (
+            #{safetyCheckDetail.id},#{safetyCheckDetail.ip},#{safetyCheckDetail.zeroID},#{safetyCheckDetail.pid},
+            #{safetyCheckDetail.processName},#{safetyCheckDetail.runTime},#{safetyCheckDetail.processPath},#{safetyCheckDetail.processPathIsSafety}
+            )
+        </foreach>
+    </insert>
+</mapper>
